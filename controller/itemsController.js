@@ -42,16 +42,22 @@ exports.getItems = async (req, res) => {
 exports.addItem = async (req, res) => {
   const item_id = uuidv4();
   const created_date = Date.now();
-  const item = { item_id, ...req.body,  created_date };
-  console.log(item)
-  try{
-    const response = await docClient.send(new PutCommand(item));
-    res.send(response.item)
-  }catch(err){
-    res.status(500).send(err)
+  const item = { item_id: item_id, ...req.body, created_date: created_date };
+  const params = {
+    TableName: process.env.aws_items_table_name,
+    Item : item,
+  };
+
+
+  try {
+    const data = await docClient.send(new PutCommand(params));
+    res.send(data.Items);
+  } catch (err) {
     console.error(err);
+    res.status(500).send(err);
   }
 };
+
 
 // TODO #1.3: Delete an item from DynamDB
 exports.deleteItem = async (req, res) => {
@@ -62,6 +68,7 @@ exports.deleteItem = async (req, res) => {
       'item_id': item_id
     }
   };
+
 
   try {
     const data = await docClient.send(new DeleteCommand(params));
