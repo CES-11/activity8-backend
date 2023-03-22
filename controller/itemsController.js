@@ -51,7 +51,7 @@ exports.addItem = async (req, res) => {
   try {
     const data = await docClient.send(new PutCommand(params));
     res.send("success");
-    res.send(data.Items);
+    // res.send(data.Items);
   } catch (err) {
     console.error(err);
     res.status(500).send(err);
